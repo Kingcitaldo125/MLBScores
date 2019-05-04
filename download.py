@@ -9,19 +9,41 @@ soup = BeautifulSoup(html,features="html.parser")
 
 data = soup.prettify()
 title = data[45471:45585]
-scores = data[87560:95500]
+scores = str(data[87500:96875])
 
-#print("Title:",title)
-#print("Scores:",scores)
+#print(scores)
+splits = ""
+for m in re.finditer(r"\S", scores, re.S|re.I):
+	#print("")
+	splits += m.group()
 
-regx = r"loser(.+)winner(.+)"
-#WinPitcherRegex = r"W\s+(.+)\s+\((\d+-\d+)\)"
-#LoosePitcherRegex = r"L\s+(.+)\s+\((\d+-\d+)\)"
+gameList = splits.split("</div><divclass=\"game_summarynohover\">")
+print("GameList:",len(gameList))
 
-mObj = re.search(regx, scores, re.S|re.I|re.M)
-if mObj:
-	#print("Group 0:", mObj.group(0))
-	print("Group 1:", mObj.group(1))
-	print("Group 2:", mObj.group(2))
+for game in gameList:
+	mO = re.search(r"loser.+shtml\">(\w+)</a>.+Final.+winner.+shtml\">(\w+)</a>.+<tbody>.+<strong>([A-Z])</strong>.+<td>(\w+[(]\d+-\d+[)])</td>.+<strong>([A-Z])</strong>.+<td>(\w+[(]\d+-\d+[)])</td>.+</tbody>", game, re.S|re.M|re.I)
+	if mO:
+		print("")
+		#print(":",mO.group(0))
+		print("Losing Team:",mO.group(1))
+		print("Winning Team:",mO.group(2))
+		print("Pitcher Result:",mO.group(3))
+		print("Pitcher:",mO.group(4))
+		print("Pitcher Result:",mO.group(5))
+		print("Pitcher:",mO.group(6))
+	else:
+		mOO = re.search(r"winner.+shtml\">(\w+)</a>.+Final.+loser.+shtml\">(\w+)</a>.+<tbody>.+<strong>([A-Z])</strong>.+<td>(\w+[(]\d+-\d+[)])</td>.+<strong>([A-Z])</strong>.+<td>(\w+[(]\d+-\d+[)])</td>.+</tbody>", game, re.S|re.M|re.I)
+		if mOO:
+			print("")
+			#print(":",mOO.group(0))
+			print("Winning Team:",mOO.group(1))
+			print("Losing Team:",mOO.group(2))
+			print("Pitcher Result:",mOO.group(3))
+			print("Pitcher:",mOO.group(4))
+			print("Pitcher Result:",mOO.group(5))
+			print("Pitcher:",mOO.group(6))
 	
-	
+	#print(game)
+	#print("")
+	#print("")
+	#print("")
