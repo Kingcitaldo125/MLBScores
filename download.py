@@ -81,7 +81,7 @@ def main(year,month,day):
 
 	data = soup.prettify()
 	title = data[45471:45585]
-	scores = str(data[87500:105500])
+	scores = str(data[87500:105900])
 
 	if printScores:
 		print(scores)
@@ -107,7 +107,7 @@ def main(year,month,day):
 	print("GameList:",len(gameList))
 
 	for game in gameList:
-		mO = re.search(r"loser.+shtml\">(\w+)</a>.+Final.+winner.+shtml\">(\w+)</a>.+<tbody>.+<strong>([A-Z])</strong>.+<td>(\w+[(]\d+-\d+[)])</td>.+<strong>([A-Z])</strong>.+<td>(\w+[(]\d+-\d+[)])</td>.+</tbody>", game, re.S|re.M|re.I)
+		mO = re.search(r"loser.+shtml\">(\w+[.]+\w+|\w+)+</a>.+Final.+winner.+shtml\">(\w+[.]+\w+|\w+)+</a>.+<tbody>.+<strong>([A-Z])</strong>.+<td>(\w+[(]\d+-\d+[)])</td>.+<strong>([A-Z])</strong>.+<td>(\w+[(]\d+-\d+[)])</td>.+</tbody>", game, re.S|re.M|re.I)
 		if mO:
 			wP = MLBClasses.getPitcherInformation(mO.group(4))
 			lP = MLBClasses.getPitcherInformation(mO.group(6))
@@ -122,7 +122,7 @@ def main(year,month,day):
 				print("Pitcher Result:",mO.group(5))
 				print("Pitcher:",losePitch)
 		else:
-			mOO = re.search(r"winner.+shtml\">(\w+)</a>.+Final.+loser.+shtml\">(\w+)</a>.+<tbody>.+<strong>([A-Z])</strong>.+<td>(\w+[(]\d+-\d+[)])</td>.+<strong>([A-Z])</strong>.+<td>(\w+[(]\d+-\d+[)])</td>.+</tbody>", game, re.S|re.M|re.I)
+			mOO = re.search(r"winner.+shtml\">(\w+[.]+\w+|\w+)</a>.+Final.+loser.+shtml\">(\w+[.]+\w+|\w+)</a>.+<tbody>.+<strong>([A-Z])</strong>.+<td>(\w+[(]\d+-\d+[)])</td>.+<strong>([A-Z])</strong>.+<td>(\w+[(]\d+-\d+[)])</td>.+</tbody>", game, re.S|re.M|re.I)
 			if mOO:
 				wP = MLBClasses.getPitcherInformation(mOO.group(4))
 				lP = MLBClasses.getPitcherInformation(mOO.group(6))
