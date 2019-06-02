@@ -125,9 +125,9 @@ def main(year,month,day):
 			if printResults:
 				print("")
 				print(MLBClasses.getTeamInformation(looseTeamO.group(1)), looseTeamO.group(2))
-				print(MLBClasses.getTeamInformation(winTeamO.group(1)), winTeamO.group(2))
-				print(pitchO.group(1), winPitch)
-				print(pitchO.group(3), losePitch)
+				print("W", MLBClasses.getTeamInformation(winTeamO.group(1)), winTeamO.group(2))
+				print("\t", pitchO.group(1), winPitch)
+				print("\t", pitchO.group(3), losePitch)
 				
 		else: # try another regex pattern pair - Away team won
 			_winTeamO = _winProg.search(game)
@@ -140,10 +140,10 @@ def main(year,month,day):
 				_losePitch = MLBClasses.Pitcher(_lP[0],_lP[1])
 				if printResults:
 					print("")
-					print(MLBClasses.getTeamInformation(_winTeamO.group(1)), _winTeamO.group(2))
+					print("W", MLBClasses.getTeamInformation(_winTeamO.group(1)), _winTeamO.group(2))
 					print(MLBClasses.getTeamInformation(_looseTeamO.group(1)), _looseTeamO.group(2))
-					print(pitchO.group(1), _winPitch)
-					print(pitchO.group(3), _losePitch)
+					print("\t", pitchO.group(1), _winPitch)
+					print("\t", pitchO.group(3), _losePitch)
 
 
 done = False
