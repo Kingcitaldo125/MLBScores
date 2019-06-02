@@ -106,36 +106,45 @@ def main(year,month,day):
 	gameList = splits.split("</div><divclass=\"game_summarynohover\">")
 	print("GameList:",len(gameList))
 
+	winProg = re.compile(r"<tbody>.+loser.+shtml\">.+winner.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+</tr>", re.S|re.M|re.I)
+	looseProg = re.compile(r"<tbody>.+loser.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+</tr>.+winner", re.S|re.M|re.I)
+	
+	_winProg = re.compile(r"<tbody>.+winner.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+</tr>.+loser", re.S|re.M|re.I)
+	_looseProg = re.compile(r"<tbody>.+winner.+shtml\">.+loser.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+</tr>", re.S|re.M|re.I)
+	
+	pitchProg = re.compile(r"<table><tbody>.+<strong>([A-Z])</strong>.+<td>(\w+\(\d+-\d+\))</td>.+<strong>([A-Z])</strong>.+<td>(\w+[(]\d+-\d+[)])</td>.+</tbody></table>", re.S|re.M|re.I)
 	for game in gameList:
-		mO = re.search(r"loser.+shtml\">(\w+[.]+\w+|\w+)+</a>.+Final.+winner.+shtml\">(\w+[.]+\w+|\w+)+</a>.+<tbody>.+<strong>([A-Z])</strong>.+<td>(\w+[(]\d+-\d+[)])</td>.+<strong>([A-Z])</strong>.+<td>(\w+[(]\d+-\d+[)])</td>.+</tbody>", game, re.S|re.M|re.I)
-		if mO:
-			wP = MLBClasses.getPitcherInformation(mO.group(4))
-			lP = MLBClasses.getPitcherInformation(mO.group(6))
+		looseTeamO = looseProg.search(game)
+		winTeamO = winProg.search(game)
+		pitchO = pitchProg.search(game)
+		if looseTeamO and winTeamO and pitchO: # try to match on one type of regex pattern pair - Home team won
+			wP = MLBClasses.getPitcherInformation(pitchO.group(2))
+			lP = MLBClasses.getPitcherInformation(pitchO.group(4))
 			winPitch = MLBClasses.Pitcher(wP[0],wP[1])
 			losePitch = MLBClasses.Pitcher(lP[0],lP[1])
 			if printResults:
 				print("")
-				print("Winning Team:", MLBClasses.getTeamInformation(mO.group(1)))
-				print("Losing Team:", MLBClasses.getTeamInformation(mO.group(2)))
-				print("Pitcher Result:",mO.group(3))
-				print("Pitcher:",winPitch)
-				print("Pitcher Result:",mO.group(5))
-				print("Pitcher:",losePitch)
-		else:
-			mOO = re.search(r"winner.+shtml\">(\w+[.]+\w+|\w+)</a>.+Final.+loser.+shtml\">(\w+[.]+\w+|\w+)</a>.+<tbody>.+<strong>([A-Z])</strong>.+<td>(\w+[(]\d+-\d+[)])</td>.+<strong>([A-Z])</strong>.+<td>(\w+[(]\d+-\d+[)])</td>.+</tbody>", game, re.S|re.M|re.I)
-			if mOO:
-				wP = MLBClasses.getPitcherInformation(mOO.group(4))
-				lP = MLBClasses.getPitcherInformation(mOO.group(6))
-				winPitch = MLBClasses.Pitcher(wP[0],wP[1])
-				losePitch = MLBClasses.Pitcher(lP[0],lP[1])
+				print(MLBClasses.getTeamInformation(looseTeamO.group(1)), looseTeamO.group(2))
+				print(MLBClasses.getTeamInformation(winTeamO.group(1)), winTeamO.group(2))
+				print(pitchO.group(1), winPitch)
+				print(pitchO.group(3), losePitch)
+				
+		else: # try another regex pattern pair - Away team won
+			_winTeamO = _winProg.search(game)
+			_looseTeamO = _looseProg.search(game)
+			pitchO = pitchProg.search(game)
+			if _looseTeamO and _winTeamO and pitchO: # try to match on one type of regex pattern pair
+				_wP = MLBClasses.getPitcherInformation(pitchO.group(2))
+				_lP = MLBClasses.getPitcherInformation(pitchO.group(4))
+				_winPitch = MLBClasses.Pitcher(_wP[0],_wP[1])
+				_losePitch = MLBClasses.Pitcher(_lP[0],_lP[1])
 				if printResults:
 					print("")
-					print("_Winning Team:", MLBClasses.getTeamInformation(mOO.group(1)))
-					print("_Losing Team:", MLBClasses.getTeamInformation(mOO.group(2)))
-					print("_Pitcher Result:", mOO.group(3))
-					print("_Pitcher:", winPitch)
-					print("_Pitcher Result:", mOO.group(5))
-					print("_Pitcher:", losePitch)
+					print(MLBClasses.getTeamInformation(_winTeamO.group(1)), _winTeamO.group(2))
+					print(MLBClasses.getTeamInformation(_looseTeamO.group(1)), _looseTeamO.group(2))
+					print(pitchO.group(1), _winPitch)
+					print(pitchO.group(3), _losePitch)
+
 
 done = False
 while not done:
