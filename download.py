@@ -7,6 +7,7 @@ import MLBClasses
 printData = False
 printResults = True
 
+# Menu function
 def displayMenu():
 	print("\n*************************")
 	print("Select an Option Below:\n")
@@ -16,6 +17,7 @@ def displayMenu():
 	print("4:Exit")
 	print("*************************\n")
 	
+# Menu function
 def listenForOptions():
 	option = str(input(''))
 	if option == "1":
@@ -42,6 +44,7 @@ def listenForOptions():
 	
 	return 1
 
+# Main function
 def main(year,month,day):
 	intYear = int(year)
 	if intYear < 1871:
@@ -68,6 +71,7 @@ def main(year,month,day):
 	month = str(intMonth)
 	day = str(intDay)
 
+	# Concatenate the URL containing the information
 	webAddress = "https://www.baseball-reference.com/boxes/?"
 	webAddress += "year="
 	webAddress += year
@@ -132,6 +136,10 @@ def main(year,month,day):
 	_looseProg = re.compile(r"winner.+shtml\">.+loser.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+</tr>", re.S|re.M|re.I)
 	
 	pitchProg = re.compile(r"<table><tbody>.+<strong>([A-Z])</strong>.+<td>(\w+\(\d+-\d+\))</td>.+<strong>([A-Z])</strong>.+<td>(\w+[(]\d+-\d+[)])</td>.+</tbody></table>", re.S|re.M|re.I)
+	
+	# Iterate through the list of games that have whitespace trimmed
+	# matching against the regex patterns listed above
+	# After matching for one or the other, extract information using regex groups
 	for game in gameList:
 		#print("Top")
 		looseTeamO = looseProg.search(game)
