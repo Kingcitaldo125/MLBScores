@@ -1,3 +1,5 @@
+# Author: Paul Arelt
+# For official use only; all rights reserved
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 from datetime import datetime
