@@ -106,11 +106,14 @@ def main(year,month,day):
 	gameList = splits.split("</div><divclass=\"game_summarynohover\">")
 	print("GameList:",len(gameList))
 
-	winProg = re.compile(r"<tbody>.+loser.+shtml\">.+winner.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+</tr>", re.S|re.M|re.I)
-	looseProg = re.compile(r"<tbody>.+loser.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+</tr>.+winner", re.S|re.M|re.I)
+	#winProg = re.compile(r"<tbody>.+loser.+shtml\">.+winner.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+</tr>", re.S|re.M|re.I)
+	winProg = re.compile(r"loser.+shtml\">.+winner.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+</tr>", re.S|re.M|re.I)
+	#looseProg = re.compile(r"<tbody>.+loser.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+</tr>.+winner", re.S|re.M|re.I)
+	looseProg = re.compile(r"loser.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+winner", re.S|re.M|re.I)
 	
-	_winProg = re.compile(r"<tbody>.+winner.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+</tr>.+loser", re.S|re.M|re.I)
-	_looseProg = re.compile(r"<tbody>.+winner.+shtml\">.+loser.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+</tr>", re.S|re.M|re.I)
+	#_winProg = re.compile(r"<tbody>.+winner.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+</tr>.+loser", re.S|re.M|re.I)
+	_winProg = re.compile(r"winner.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+loser", re.S|re.M|re.I)
+	_looseProg = re.compile(r"winner.+shtml\">.+loser.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+</tr>", re.S|re.M|re.I)
 	
 	pitchProg = re.compile(r"<table><tbody>.+<strong>([A-Z])</strong>.+<td>(\w+\(\d+-\d+\))</td>.+<strong>([A-Z])</strong>.+<td>(\w+[(]\d+-\d+[)])</td>.+</tbody></table>", re.S|re.M|re.I)
 	for game in gameList:
