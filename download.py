@@ -4,7 +4,7 @@ from datetime import datetime
 import re
 import MLBClasses
 
-printScores = False
+printData = False
 printResults = True
 
 def displayMenu():
@@ -81,9 +81,28 @@ def main(year,month,day):
 
 	data = soup.prettify()
 	title = data[45471:45585]
-	scores = str(data[87500:105900])
+	lowerLimit = 87500
+	upperLimit = 105900
+	
+	# Trim the end of the list of games down
+	# Helps compile times for the final game
+	# in the list of games
+	buff = ""
+	word = ""
+	start = 0
+	trigger = False
+	for dd in range(lowerLimit,upperLimit):
+		word += data[dd]
+		if data[dd] == "\n":
+			if "filter switcher" in word:
+				trigger = True
+			word = ""
+		if trigger:
+			start += 1
+	upperLimit -= (start+0) # for good measure
+	scores = str(data[lowerLimit:upperLimit])
 
-	if printScores:
+	if printData:
 		print(scores)
 
 	# Date
@@ -106,19 +125,19 @@ def main(year,month,day):
 	gameList = splits.split("</div><divclass=\"game_summarynohover\">")
 	print("GameList:",len(gameList))
 
-	#winProg = re.compile(r"<tbody>.+loser.+shtml\">.+winner.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+</tr>", re.S|re.M|re.I)
 	winProg = re.compile(r"loser.+shtml\">.+winner.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+</tr>", re.S|re.M|re.I)
-	#looseProg = re.compile(r"<tbody>.+loser.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+</tr>.+winner", re.S|re.M|re.I)
 	looseProg = re.compile(r"loser.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+winner", re.S|re.M|re.I)
 	
-	#_winProg = re.compile(r"<tbody>.+winner.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+</tr>.+loser", re.S|re.M|re.I)
 	_winProg = re.compile(r"winner.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+loser", re.S|re.M|re.I)
 	_looseProg = re.compile(r"winner.+shtml\">.+loser.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+</tr>", re.S|re.M|re.I)
 	
 	pitchProg = re.compile(r"<table><tbody>.+<strong>([A-Z])</strong>.+<td>(\w+\(\d+-\d+\))</td>.+<strong>([A-Z])</strong>.+<td>(\w+[(]\d+-\d+[)])</td>.+</tbody></table>", re.S|re.M|re.I)
 	for game in gameList:
+		#print("Top")
 		looseTeamO = looseProg.search(game)
+		#print("WinTeamO")
 		winTeamO = winProg.search(game)
+		#print("PitchO")
 		pitchO = pitchProg.search(game)
 		if looseTeamO and winTeamO and pitchO: # try to match on one type of regex pattern pair - Home team won
 			wP = MLBClasses.getPitcherInformation(pitchO.group(2))
@@ -133,8 +152,11 @@ def main(year,month,day):
 				print("\t", pitchO.group(3), losePitch)
 				
 		else: # try another regex pattern pair - Away team won
+			#print("Away Win")
 			_winTeamO = _winProg.search(game)
+			#print("Away Loose")
 			_looseTeamO = _looseProg.search(game)
+			#print("Away Pitch")
 			pitchO = pitchProg.search(game)
 			if _looseTeamO and _winTeamO and pitchO: # try to match on one type of regex pattern pair
 				_wP = MLBClasses.getPitcherInformation(pitchO.group(2))
