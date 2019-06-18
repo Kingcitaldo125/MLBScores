@@ -130,7 +130,15 @@ def main(year,month,day):
 
 	gameList = splits.split("</div><divclass=\"game_summarynohover\">")
 	print("GameList:",len(gameList))
-
+	
+	
+	if len(gameList) == 1: # check for no games played
+		m = re.match(r'^.*<h3>(\w+)</h3>.*$', gameList[0], re.I|re.M)
+		if m:
+			print("No Games Were or Have Yet Been Played on This Date")
+			return
+		
+		
 	winProg = re.compile(r"loser.+shtml\">.+winner.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+</tr>", re.S|re.M|re.I)
 	looseProg = re.compile(r"loser.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+winner", re.S|re.M|re.I)
 	
@@ -143,7 +151,7 @@ def main(year,month,day):
 	# matching against the regex patterns listed above
 	# After matching for one or the other, extract information using regex groups
 	for game in gameList:
-		#print("Top")
+		#print(game)
 		looseTeamO = looseProg.search(game)
 		#print("WinTeamO")
 		winTeamO = winProg.search(game)
