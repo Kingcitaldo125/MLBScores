@@ -145,7 +145,10 @@ def main(year,month,day):
 	_winProg = re.compile(r"winner.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+loser", re.S|re.M|re.I)
 	_looseProg = re.compile(r"winner.+shtml\">.+loser.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+</tr>", re.S|re.M|re.I)
 	
-	pitchProg = re.compile(r"<table><tbody>.+<strong>([A-Z])</strong>.+<td>(\w+\(\d+-\d+\))</td>.+<strong>([A-Z])</strong>.+<td>(\w+[(]\d+-\d+[)])</td>.+</tbody></table>", re.S|re.M|re.I)
+	pitchRegex = r"<table><tbody>.+<strong>([A-Z])</strong>.+<td>(\w+\(\d+-\d+\))</td>.+<strong>([A-Z])</strong>.+<td>(\w+[(]\d+-\d+[)])</td>.+</tbody></table>"
+	saveRegex = r"<table><tbody>.+<strong>S</strong></td><td>(\w+\(\d+\))</td></tr></tbody></table>$"
+	pitchProg = re.compile(pitchRegex, re.S|re.M|re.I)
+	saveProg = re.compile(saveRegex, re.S|re.M|re.I)
 	
 	# Iterate through the list of games that have whitespace trimmed
 	# matching against the regex patterns listed above
@@ -162,13 +165,19 @@ def main(year,month,day):
 			lP = MLBClasses.getPitcherInformation(pitchO.group(4))
 			winPitch = MLBClasses.Pitcher(wP[0],wP[1])
 			losePitch = MLBClasses.Pitcher(lP[0],lP[1])
+			saveO = saveProg.search(game)
 			if printResults:
 				print("")
 				print(MLBClasses.getTeamInformation(looseTeamO.group(1)), looseTeamO.group(2))
 				print("W", MLBClasses.getTeamInformation(winTeamO.group(1)), winTeamO.group(2))
 				print("\t", pitchO.group(1), winPitch)
 				print("\t", pitchO.group(3), losePitch)
-				
+				if saveO:
+					sName = MLBClasses.getPitcherInformation(saveO.group(1))[0]
+					sRecord = MLBClasses.getPitcherInformation(saveO.group(1))[1]
+					info = sName + " " + sRecord
+					print("\t S",info)
+
 		else: # try another regex pattern pair - Away team won
 			#print("Away Win")
 			_winTeamO = _winProg.search(game)
@@ -181,12 +190,18 @@ def main(year,month,day):
 				_lP = MLBClasses.getPitcherInformation(pitchO.group(4))
 				_winPitch = MLBClasses.Pitcher(_wP[0],_wP[1])
 				_losePitch = MLBClasses.Pitcher(_lP[0],_lP[1])
+				saveO = saveProg.search(game)
 				if printResults:
 					print("")
 					print("W", MLBClasses.getTeamInformation(_winTeamO.group(1)), _winTeamO.group(2))
 					print(MLBClasses.getTeamInformation(_looseTeamO.group(1)), _looseTeamO.group(2))
 					print("\t", pitchO.group(1), _winPitch)
 					print("\t", pitchO.group(3), _losePitch)
+					if saveO:
+						sName = MLBClasses.getPitcherInformation(saveO.group(1))[0]
+						sRecord = MLBClasses.getPitcherInformation(saveO.group(1))[1]
+						info = sName + " " + sRecord
+						print("\t S", info)
 
 
 done = False
