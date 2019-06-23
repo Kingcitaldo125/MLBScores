@@ -46,6 +46,20 @@ def listenForOptions():
 	
 	return 1
 
+def getDate(webAddress):
+	year = ""
+	month = ""
+	day = ""
+	dMatch = re.match(r"^.+year=(.+).+month=(.+).+day=(.+)", webAddress, re.M|re.I)
+	if dMatch:
+		year = dMatch.group(1)
+		month = dMatch.group(2)
+		day = dMatch.group(3)
+
+	monthDict = {1:"Jan", 2:"Feb", 3:"Mar", 4:"Apr", 5:"May", 6:"Jun", 7:"Jul", 8:"Aug", 9:"Sep", 10:"Oct", 11:"Nov", 12:"Dec"}
+	newdt = datetime.strptime(monthDict[int(month)]+" "+day+" "+year, "%b %d %Y")
+	print("Date", newdt.strftime("%b %d %Y"))
+
 # Main function
 def main(year,month,day):
 	intYear = int(year)
@@ -112,16 +126,7 @@ def main(year,month,day):
 		print(scores)
 
 	# Date
-	year = ""
-	month = ""
-	day = ""
-	dMatch = re.match(r"^.+year=(.+).+month=(.+).+day=(.+)", webAddress, re.M|re.I)
-	if dMatch:
-		year = dMatch.group(1)
-		month = dMatch.group(2)
-		day = dMatch.group(3)
-
-	print("Date",year+month+day)
+	getDate(webAddress)
 
 	splits = ""
 	for m in re.finditer(r"\S", scores, re.S|re.I):
