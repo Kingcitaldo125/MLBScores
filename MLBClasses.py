@@ -93,6 +93,7 @@ def getGameInformation(game, saveProg, winTeamO, looseTeamO, winPitch, losePitch
 			sRecord = None
 			sRecord = saveO.group(2)
 			if sRecord == None:
+				info = sName + " " + "(?)"
 				print("\t S", sName)
 			else:
 				info = sName + " " + sRecord
