@@ -1,5 +1,6 @@
 # Author: Paul Arelt
 # For official use only; all rights reserved
+# Test Dates: 2019-6-3
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 from datetime import datetime
@@ -101,7 +102,7 @@ def main(year,month,day):
 
 	data = soup.prettify()
 	title = data[45471:45585]
-	lowerLimit = 87500
+	lowerLimit = 86885
 	upperLimit = 105900
 	
 	# Trim the end of the list of games down
@@ -133,8 +134,11 @@ def main(year,month,day):
 		#print("")
 		splits += m.group()
 
-	gameList = splits.split("</div><divclass=\"game_summarynohover\">")
-	print("GameList:",len(gameList))
+	if printData:
+		print("splits", splits)
+	gameList = splits.split("<divclass=\"game_summarynohover\">")
+	#print("gameList", gameList)
+	print("GameList:",len(gameList)-1)
 	
 	
 	if len(gameList) == 1: # check for no games played
@@ -150,8 +154,8 @@ def main(year,month,day):
 	_winProg = re.compile(r"winner.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+loser", re.S|re.M|re.I)
 	_looseProg = re.compile(r"winner.+shtml\">.+loser.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+</tr>", re.S|re.M|re.I)
 	
-	pitchRegex = r"<table><tbody>.+<strong>([A-Z])</strong>.+<td>(\w+\(\d+-\d+\))</td>.+<strong>([A-Z])</strong>.+<td>(\w+[(]\d+-\d+[)])</td>.+</tbody></table>"
-	saveRegex = r"<table><tbody>.+<strong>S</strong></td><td>(\w+\(\d+\))</td></tr></tbody></table>$"
+	pitchRegex = r"<table><tbody><tr><td><strong>W</strong></td><td>([A-Z.]+)([(]\d+[-]\d+[)])?</td></tr><tr><td><strong>L</strong></td><td>([A-Z.]+)([(]\d+[-]\d+[)])?</td></tr>.+</div>"
+	saveRegex = r"<strong>S</strong></td><td>([A-Z.]+)([(]\d+[)])?</td></tr></tbody></table>"
 	pitchProg = re.compile(pitchRegex, re.S|re.M|re.I)
 	saveProg = re.compile(saveRegex, re.S|re.M|re.I)
 	
@@ -159,55 +163,72 @@ def main(year,month,day):
 	# matching against the regex patterns listed above
 	# After matching for one or the other, extract information using regex groups
 	for game in gameList:
-		#print(game)
+		if game == '':
+			continue
+		#print("Game", game)
 		looseTeamO = looseProg.search(game)
-		#print("WinTeamO")
 		winTeamO = winProg.search(game)
-		#print("PitchO")
+		#print("WinTeamO", winTeamO)
+		#print("LooseTeamO", looseTeamO)
 		pitchO = pitchProg.search(game)
+		#print("PitchO", pitchO)
 		if looseTeamO and winTeamO and pitchO: # try to match on one type of regex pattern pair - Home team won
-			wP = MLBClasses.getPitcherInformation(pitchO.group(2))
-			lP = MLBClasses.getPitcherInformation(pitchO.group(4))
-			winPitch = MLBClasses.Pitcher(wP[0],wP[1])
-			losePitch = MLBClasses.Pitcher(lP[0],lP[1])
-			saveO = saveProg.search(game)
-			if printResults:
-				print("")
-				print(MLBClasses.getTeamInformation(looseTeamO.group(1)), looseTeamO.group(2))
-				print("W", MLBClasses.getTeamInformation(winTeamO.group(1)), winTeamO.group(2))
-				print("\t", pitchO.group(1), winPitch)
-				print("\t", pitchO.group(3), losePitch)
-				if saveO:
-					sName = MLBClasses.getPitcherInformation(saveO.group(1))[0]
-					sRecord = MLBClasses.getPitcherInformation(saveO.group(1))[1]
-					info = sName + " " + sRecord
-					print("\t S",info)
+			wPName = pitchO.group(1)
+			wPRecord = None
+			wPRecord = pitchO.group(2)
+			wP = [MLBClasses.getTeamInformation(wPName), wPRecord if wPRecord is not None else "(?,?)"]
+			#print("wP",wP)
+			
+			lPName = pitchO.group(3)
+			lPRecord = None
+			lPRecord = pitchO.group(4)
+			lP = [MLBClasses.getTeamInformation(lPName), lPRecord if lPRecord is not None else "(?,?)"]
+			#print("lP",lP)
+			
+			# Handle cases where pitcher(s) don't have W-L records
+			winPitch = None
+			losePitch = None
+			if isinstance(wP,str):
+				winPitch = MLBClasses.Pitcher(wP)
+			else:
+				winPitch = MLBClasses.Pitcher(wP[0], wP[1])
+			
+			if isinstance(lP,str):
+				losePitch = MLBClasses.Pitcher(lP)
+			else:
+				losePitch = MLBClasses.Pitcher(lP[0], lP[1])
+			
+			MLBClasses.getGameInformation(game, saveProg, winTeamO, looseTeamO, winPitch, losePitch, printResults, False)
 
 		else: # try another regex pattern pair - Away team won
-			#print("Away Win")
 			_winTeamO = _winProg.search(game)
-			#print("Away Loose")
 			_looseTeamO = _looseProg.search(game)
-			#print("Away Pitch")
 			pitchO = pitchProg.search(game)
 			if _looseTeamO and _winTeamO and pitchO: # try to match on one type of regex pattern pair
-				_wP = MLBClasses.getPitcherInformation(pitchO.group(2))
-				_lP = MLBClasses.getPitcherInformation(pitchO.group(4))
-				_winPitch = MLBClasses.Pitcher(_wP[0],_wP[1])
-				_losePitch = MLBClasses.Pitcher(_lP[0],_lP[1])
-				saveO = saveProg.search(game)
-				if printResults:
-					print("")
-					print("W", MLBClasses.getTeamInformation(_winTeamO.group(1)), _winTeamO.group(2))
-					print(MLBClasses.getTeamInformation(_looseTeamO.group(1)), _looseTeamO.group(2))
-					print("\t", pitchO.group(1), _winPitch)
-					print("\t", pitchO.group(3), _losePitch)
-					if saveO:
-						sName = MLBClasses.getPitcherInformation(saveO.group(1))[0]
-						sRecord = MLBClasses.getPitcherInformation(saveO.group(1))[1]
-						info = sName + " " + sRecord
-						print("\t S", info)
-
+				_wPName = pitchO.group(1)
+				_wPRecord = pitchO.group(2)
+				_wP = [MLBClasses.getTeamInformation(_wPName), _wPRecord  if _wPRecord is not None else "(?,?)"]
+				#print("wP",_wP)
+				
+				_lPName = pitchO.group(3)
+				_lPRecord = pitchO.group(4)
+				_lP = [MLBClasses.getTeamInformation(_lPName), _lPRecord if _lPRecord is not None else "(?,?)"]
+				#print("lP",_lP)
+			
+				# Handle cases where pitcher(s) don't have W-L records
+				_winPitch = None
+				_losePitch = None
+				if isinstance(_wP,str):
+					_winPitch = MLBClasses.Pitcher(_wP)
+				else:
+					_winPitch = MLBClasses.Pitcher(_wP[0], _wP[1])
+				
+				if isinstance(_lP,str):
+					_losePitch = MLBClasses.Pitcher(_lP)
+				else:
+					_losePitch = MLBClasses.Pitcher(_lP[0], _lP[1])
+				
+				MLBClasses.getGameInformation(game, saveProg, _winTeamO, _looseTeamO, _winPitch, _losePitch, printResults, True)
 
 done = False
 while not done:

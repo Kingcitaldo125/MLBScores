@@ -1,7 +1,7 @@
 import re
 
 class Pitcher(object):
-	def __init__(self, name, record):
+	def __init__(self, name, record="(?,?)"):
 		self.name = name
 		self.record = record
 	
@@ -61,11 +61,39 @@ def getTeamInformation(tString):
 	return resTString
 
 def getPitcherInformation(pString):
-	mRes = re.match(r'(\w+)(\(.+\))',pString, re.I | re.M)
+	print("pString", pString)
+	mRes = re.match(r'(.+)([(].+[)])',pString, re.I | re.M)
 	name = ""
 	record = ""
 	if mRes:
-		#print("Pitcher Info:",mRes.group(0))
 		name = getTeamInformation(mRes.group(1))
 		record = mRes.group(2)
+	else: # could not get record for pitcher
+		mRes = re.match(r'(.+)',pString, re.I | re.M)
+		if mRes:
+			name = getTeamInformation(mRes.group(1))
+			return name
+			
 	return [name,record]
+
+def getGameInformation(game, saveProg, winTeamO, looseTeamO, winPitch, losePitch, printResults, AwayWinner):
+	saveO = saveProg.search(game)
+	if printResults:
+		print("")
+		if AwayWinner:
+			print("W", getTeamInformation(winTeamO.group(1)), winTeamO.group(2))
+			print(getTeamInformation(looseTeamO.group(1)), looseTeamO.group(2))
+		else:
+			print(getTeamInformation(looseTeamO.group(1)), looseTeamO.group(2))
+			print("W", getTeamInformation(winTeamO.group(1)), winTeamO.group(2))
+		print("\t", "W", winPitch)
+		print("\t", "L", losePitch)
+		if saveO:
+			sName = getTeamInformation(saveO.group(1))
+			sRecord = None
+			sRecord = saveO.group(2)
+			if sRecord == None:
+				print("\t S", sName)
+			else:
+				info = sName + " " + sRecord
+				print("\t S", info)
