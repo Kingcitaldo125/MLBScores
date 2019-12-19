@@ -20,7 +20,7 @@ def displayMenu():
 	print("4:Exit")
 	print("*************************\n")
 	
-# Menu function
+# Option listener function
 def listenForOptions():
 	option = str(input(''))
 	if option == "1":
