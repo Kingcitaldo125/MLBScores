@@ -1,6 +1,9 @@
 # MLB Game Results (MLBScores)
 ## Get the results from any regular season MLB game in MLB history (1871-2020)
 
+Special thanks to [Baseball Reference](https://www.baseball-reference.com/boxes/), which has a de-facto API that makes this possible.
+This is essentially a [MUD](https://en.wikipedia.org/wiki/MUD) based on the boxscores for Baseball Reference.
+
 ### Usage
 Follow the command prompt guide for the `download.bat` script like so:
 
