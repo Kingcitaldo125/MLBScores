@@ -8,14 +8,14 @@ This is essentially a [MUD](https://en.wikipedia.org/wiki/MUD) based on the [box
 Follow the command prompt guide for the `download.bat` script like so:
 
 ```
-*************************
+**************************************
 Select an Option Below:
 
 1:Get yesterday's scores
 2:Get tomorrow's scores (coming soon)
 3:Get scores for a particular date
 4:Exit
-*************************
+**************************************
 ```
 
 For option ``3``, this can be entered like so:
