@@ -26,13 +26,13 @@ printResults = True
 
 # Menu function
 def displayMenu():
-	print("\n*************************")
+	print("\n**************************************")
 	print("Select an Option Below:\n")
 	print("1:Get yesterday's scores")
 	print("2:Get tomorrow's scores (coming soon)")
 	print("3:Get scores for a particular date")
 	print("4:Exit")
-	print("*************************\n")
+	print("**************************************\n")
 	
 # Option listener function
 def listenForOptions():
@@ -78,6 +78,7 @@ def getDate(webAddress):
 # Main function
 def main(year,month,day):
 	intYear = int(year)
+	# No baseball before 1871
 	if intYear < 1871:
 		print("Year cannot be before 1871:setting to 1871")
 		intYear = 1871
