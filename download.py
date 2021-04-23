@@ -17,9 +17,9 @@
 # SOFTWARE.
 # Test Dates: 2019-6-3
 from urllib.request import urlopen
-from bs4 import BeautifulSoup
 from datetime import datetime
 import re
+from bs4 import BeautifulSoup
 import MLBClasses
 
 print_data = False
