@@ -161,15 +161,15 @@ def main(year,month,day):
 		if m:
 			print("No Games Were or Have Yet Been Played on This Date")
 			return
-		
-		
+
+
 	winProg = re.compile(r"loser.+shtml\">.+winner.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+</tr>", re.S|re.M|re.I)
 	looseProg = re.compile(r"loser.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+winner", re.S|re.M|re.I)
 	
 	_winProg = re.compile(r"winner.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+loser", re.S|re.M|re.I)
 	_looseProg = re.compile(r"winner.+shtml\">.+loser.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+</tr>", re.S|re.M|re.I)
 	
-	pitchRegex = r"<table><tbody><tr><td><strong>W</strong></td><td>([A-Z.]+)([(]\d+[-]\d+[)])?</td></tr><tr><td><strong>L</strong></td><td>([A-Z.]+)([(]\d+[-]\d+[)])?</td></tr>.+</div>"
+	pitchRegex = r"<table><tbody><tr><td><strong>W</strong></td><td>([A-Z.áéíúüñÁÉÍÓÚÜÑ]+)([(]\d+[-]\d+[)])?</td></tr><tr><td><strong>L</strong></td><td>([A-Z.áéíúüñÁÉÍÓÚÜÑ]+)([(]\d+[-]\d+[)])?</td></tr>.+</div>"
 	saveRegex = r"<strong>S</strong></td><td>([A-Z.]+)([(]\d+[)])?</td></tr></tbody></table>"
 	pitchProg = re.compile(pitchRegex, re.S|re.M|re.I)
 	saveProg = re.compile(saveRegex, re.S|re.M|re.I)
@@ -192,13 +192,13 @@ def main(year,month,day):
 			wPRecord = None
 			wPRecord = pitchO.group(2)
 			wP = [MLBClasses.getTeamInformation(wPName), wPRecord if wPRecord is not None else "(?,?)"]
-			#print("wP",wP)
+			#print("wP:",wP)
 			
 			lPName = pitchO.group(3)
 			lPRecord = None
 			lPRecord = pitchO.group(4)
 			lP = [MLBClasses.getTeamInformation(lPName), lPRecord if lPRecord is not None else "(?,?)"]
-			#print("lP",lP)
+			#print("lP:",lP)
 			
 			# Handle cases where pitcher(s) don't have W-L records
 			winPitch = None
@@ -223,12 +223,12 @@ def main(year,month,day):
 				_wPName = pitchO.group(1)
 				_wPRecord = pitchO.group(2)
 				_wP = [MLBClasses.getTeamInformation(_wPName), _wPRecord  if _wPRecord is not None else "(?,?)"]
-				#print("wP",_wP)
+				#print("wP:",_wP)
 				
 				_lPName = pitchO.group(3)
 				_lPRecord = pitchO.group(4)
 				_lP = [MLBClasses.getTeamInformation(_lPName), _lPRecord if _lPRecord is not None else "(?,?)"]
-				#print("lP",_lP)
+				#print("lP:",_lP)
 			
 				# Handle cases where pitcher(s) don't have W-L records
 				_winPitch = None
