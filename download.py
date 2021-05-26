@@ -181,7 +181,7 @@ def main(year,month,day):
 	    r"winner.+shtml\">.+loser.+shtml\">(\w+[.]+\w+|\w+)+</a>.+\"right\">(\d+)</td>.+</tr>",
 	    re.S|re.M|re.I)
 
-    pitch_regex = r"<table><tbody><tr><td><strong>W</strong></td><td>([A-Z.áéíúüñÁÉÍÓÚÜÑ]+)([(]\d+[-]\d+[)])?</td></tr><tr><td><strong>L</strong></td><td>([A-Z.áéíúüñÁÉÍÓÚÜÑ]+)([(]\d+[-]\d+[)])?</td></tr>.+</div>"
+    pitch_regex = r"<table><tbody><tr><td><strong>W</strong></td><td>([A-Z-.áéíúüñÁÉÍÓÚÜÑ]+)([(]\d+[-]\d+[)])?</td></tr><tr><td><strong>L</strong></td><td>([A-Z-.áéíúüñÁÉÍÓÚÜÑ]+)([(]\d+[-]\d+[)])?</td></tr>.+</div>"
     save_regex = r"<strong>S</strong></td><td>([A-Z.]+)([(]\d+[)])?</td></tr></tbody></table>"
     pitch_prog = re.compile(pitch_regex, re.S|re.M|re.I)
     save_prog = re.compile(save_regex, re.S|re.M|re.I)
