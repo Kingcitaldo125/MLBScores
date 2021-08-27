@@ -128,7 +128,7 @@ def main(year,month,day):
     data = soup.prettify()
     # title = data[45471:45585]
     lower_limit = 86885
-    upper_limit = 115900
+    upper_limit = 115920
 
     # Trim the end of the list of games down
     # Helps compile times for the final game
