@@ -21,20 +21,19 @@ class Pitcher(object):
 	def __init__(self, name, record="(?,?)"):
 		self.name = name
 		self.record = record
-	
+
 	def __str__(self):
 		retStr = ""
 		retStr += self.name
 		retStr += " "
 		retStr += self.record
 		return retStr
-	
-	def getAsString(self):
-		retStr = ""
-		retStr += self.name
-		retStr += " "
-		retStr += self.record
-		return retStr
+
+	def getName(self):
+		return str(self.name)
+
+	def getRecord(self):
+		return str(self.record)
 
 class GameResult(object):
 	def __init__(self, winnerTeam, loserTeam, pitcherWinner, pitcherLoser):

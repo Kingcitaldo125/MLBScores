@@ -20,14 +20,20 @@ download.py
 '''
 
 # Test Dates: 2019-6-3
+
+import json
+import re
+
 from urllib.request import urlopen
 from datetime import datetime
-import re
 from bs4 import BeautifulSoup
+
 import MLBClasses
 
 print_data = False
 print_results = True
+
+do_export_json = False
 
 # Menu function
 def display_menu():
@@ -83,6 +89,31 @@ def get_date(web_address):
 	    8:"Aug", 9:"Sep", 10:"Oct", 11:"Nov", 12:"Dec"}
     newdt = datetime.strptime(monthDict[int(month)]+" "+day+" "+year, "%b %d %Y")
     print("Date", newdt.strftime("%b %d %Y"))
+
+def export_json(win_team_o, loose_team_o, win_pitch, wp_record, lose_pitch, lp_record, home_team_won):
+    games_json = []
+    if export_json:
+        game_json = None
+        if home_team_won:
+            game_json = {"teams":{"loose":{"name":"", "score":"", "pitcher":{"name":"", "record":""}}, "win":{"name":"", "score":"", "pitcher":{"name":"", "record":""}}}}
+        else:
+            game_json = {"teams":{"win":{"name":"", "score":"", "pitcher":{"name":"", "record":""}}, "loose":{"name":"", "score":"", "pitcher":{"name":"", "record":""}}}}
+
+        game_json['teams']['win']['name'] = MLBClasses.getTeamInformation(win_team_o.group(1))
+        game_json['teams']['win']['score'] = win_team_o.group(2)
+
+        game_json['teams']['loose']['name'] = MLBClasses.getTeamInformation(loose_team_o.group(1))
+        game_json['teams']['loose']['score'] = loose_team_o.group(2)
+
+        game_json['teams']['win']['pitcher']['name'] = win_pitch.getName()
+        game_json['teams']['win']['pitcher']['record'] = wp_record
+
+        game_json['teams']['loose']['pitcher']['name'] = lose_pitch.getName()
+        game_json['teams']['loose']['pitcher']['record'] = lp_record
+
+        games_json.append(game_json)
+
+    return games_json
 
 # Main function
 def main(year,month,day):
@@ -193,6 +224,7 @@ def main(year,month,day):
     # Iterate through the list of games that have whitespace trimmed
     # matching against the regex patterns listed above
     # After matching for one or the other, extract information using regex groups
+    games_json = []
     for game in game_list:
         if game == '':
             continue
@@ -203,6 +235,7 @@ def main(year,month,day):
         #print("loose_team_o", loose_team_o)
         pitch_o = pitch_prog.search(game)
         #print("pitch_o", pitch_o)
+
         # try to match on one type of regex pattern pair - Home team won
         if loose_team_o and win_team_o and pitch_o:
             wp_name = pitch_o.group(1)
@@ -240,6 +273,11 @@ def main(year,month,day):
 			    lose_pitch,
 			    print_results,
 			    False)
+
+            # Fill in JSON struct information
+            if do_export_json:
+                for game in export_json(win_team_o, loose_team_o, win_pitch, wp_record, lose_pitch, lp_record, True):
+                    games_json.append(game)
 
         else: # try another regex pattern pair - Away team won
             _win_team_o = _win_prog.search(game)
@@ -280,6 +318,14 @@ def main(year,month,day):
                     _lose_pitch,
                     print_results,
                     True)
+
+                # Fill in JSON struct information
+                if do_export_json:
+                    for game in export_json(_win_team_o, _loose_team_o, _win_pitch, _wp_record, _lose_pitch, _lp_record, False):
+                        games_json.append(game)
+    if do_export_json:
+        with open('out.json','w') as f:
+            json.dump(games_json, f, indent=2)
 
 done = False
 while not done:
