@@ -4,7 +4,7 @@
 Special thanks to [Baseball Reference](https://www.baseball-reference.com/), which has a de-facto API that makes this possible.
 This is essentially a [MUD](https://en.wikipedia.org/wiki/MUD) based on the [boxscores](https://www.baseball-reference.com/boxes/) for Baseball Reference.
 
-### Usage
+## Usage
 Follow the command prompt guide for the `download.bat` script like so:
 
 ```
@@ -43,3 +43,7 @@ If there were no games played for that day, it will report:
 GameList: 0
 No Games Were or Have Yet Been Played on This Date
 ```
+
+### JSON Results
+To get the games/scores for a day in JSON format, change the `do_export_json` variable to `True` in the `download.py` file.
+Game results will be written to disk after the program finishes parsing game information for a particular date.
