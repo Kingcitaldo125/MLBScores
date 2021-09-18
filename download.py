@@ -33,6 +33,7 @@ import MLBClasses
 print_data = False
 print_results = True
 
+# Switch to "True" to output JSON formatted game results to disk
 do_export_json = False
 
 # Menu function
