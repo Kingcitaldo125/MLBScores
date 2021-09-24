@@ -90,6 +90,7 @@ def get_date(web_address):
 	    8:"Aug", 9:"Sep", 10:"Oct", 11:"Nov", 12:"Dec"}
     newdt = datetime.strptime(monthDict[int(month)]+" "+day+" "+year, "%b %d %Y")
     print("Date", newdt.strftime("%b %d %Y"))
+    return newdt.strftime("%Y%m%d")
 
 def export_json(win_team_o, loose_team_o, win_pitch, wp_record, lose_pitch, lp_record, home_team_won):
     games_json = []
@@ -183,7 +184,7 @@ def main(year,month,day):
         print(scores)
 
     # Date
-    get_date(web_address)
+    str_date = get_date(web_address)
 
     splits = ""
     for m in re.finditer(r"\S", scores, re.S|re.I):
@@ -325,7 +326,8 @@ def main(year,month,day):
                     for game in export_json(_win_team_o, _loose_team_o, _win_pitch, _wp_record, _lose_pitch, _lp_record, False):
                         games_json.append(game)
     if do_export_json:
-        with open('out.json','w') as f:
+        fname = str_date+".json"
+        with open(fname,'w') as f:
             json.dump(games_json, f, indent=2)
 
 done = False
