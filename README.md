@@ -1,5 +1,5 @@
 # MLB Game Results (MLBScores)
-## Get the results from any regular season MLB game in MLB history (1871-2020)
+## Get the results from any regular season MLB game in MLB history (1871 onwards)
 
 Special thanks to [Baseball Reference](https://www.baseball-reference.com/), which has a de-facto API that makes this possible.
 This is essentially a [MUD](https://en.wikipedia.org/wiki/MUD) based on the [boxscores](https://www.baseball-reference.com/boxes/) for Baseball Reference.
